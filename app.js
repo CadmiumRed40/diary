@@ -1,10 +1,13 @@
 const path = require('path')
 const express = require('express')
+const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
 const exphbs = require('express-handlebars')
 const passport = require('passport')
 const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)// prevents being kicked out of session after changes in code by storing session in database.
+//====^^^ Must refactor code to work with connect-mongo v4. Only works with v3.2.0
 const connectDB = require('./config/db')
 
 //loaded config
@@ -31,6 +34,7 @@ app.use(session({
     secret: 'erman walt',
     resave: false,
     saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
     })
 )
 

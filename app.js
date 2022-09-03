@@ -9,6 +9,7 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)// prevents being kicked out of session after changes in code by storing session in database.
 //====^^^ Must refactor code to work with connect-mongo v4. Only works with v3.2.0
 const connectDB = require('./config/db')
+const { ppid } = require('process')
 
 //loaded config
 dotenv.config({ path: './config/config.env' })
@@ -19,6 +20,10 @@ require('./config/passport')(passport)
 connectDB()
 
 const app = express()
+
+//body parser
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
 //logging
 if (process.env.NODE_ENV === 'developement'){
@@ -49,6 +54,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 //routes
 app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))
+app.use('/stories', require('./routes/stories'))
 
 const PORT = process.env.PORT || 3000
 

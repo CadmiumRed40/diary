@@ -30,8 +30,19 @@ if (process.env.NODE_ENV === 'developement'){
     app.use(morgan('dev'))
 }
 
+//Handlebars Helpers
+const { formatDate } = require('./helpers/hbs')
+
+
 //Handlebars
-app.engine('.hbs', exphbs.engine({defaultLayout: 'main', extname: '.hbs'})) //use exphbs.engine to avoid errors. ".engine() calls the engine function from the "express-handlebars" package"
+app.engine('.hbs', exphbs.engine({
+    helpers: {
+        formatDate,
+    },
+    defaultLayout: 'main',
+    extname: '.hbs',
+    })
+) //use exphbs.engine to avoid errors. ".engine() calls the engine function from the "express-handlebars" package"
 app.set('view engine', '.hbs')
 
 // Sessions

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { ensureAuth, ensureGuest } = require('../middleware/auth') //middleware that ensures once youre signed in/logged in you won't be redirected to the login page(ensureAuth) but also be able to see the login page while not logged in(ensureGuest)
 
-const Story = require('../models/story')
+const Story = require('../models/Story')
 //@desc login/landing page
 //@route GET /
 

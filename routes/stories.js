@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { ensureAuth } = require('../middleware/auth') //middleware that ensures once youre signed in/logged in you won't be redirected to the login page(ensureAuth) but also be able to see the login page while not logged in(ensureGuest)
 
-const Story = require('../models/story')
+const Story = require('../models/Story')
 //@desc show add page
 //@route GET /stories/add
 
@@ -13,7 +13,7 @@ router.get('/add', ensureAuth , (req,res)=> {
 //@desc process add form
 //@route POST /stories
 
-router.post('/', ensureAuth , async (req,res)=> {
+router.post('/', ensureAuth, async (req,res)=> {
     try {
         req.body.user = req.user.id
         await Story.create(req.body)
@@ -46,7 +46,8 @@ router.get('/', ensureAuth , async (req,res)=> {
 
 //@desc Show edit page 
 //@desc GET /stories/edit/:id
-router.get('/edit/:id', ensureAuth, async (req, res) =>{
+router.get('/edit/:id', ensureAuth, async (req, res) => {
+    try {
     const story = await Story.findOne({
         _id: req.params.id
     }).lean()
@@ -62,13 +63,19 @@ router.get('/edit/:id', ensureAuth, async (req, res) =>{
             story,
         })
     }
+} catch (err) {
+    console.error(err)
+    return res.render('error/500')
+}
 })
 
 // @desc Update story
 // @route  PUT /stories/:id
 
 router.put('/:id', ensureAuth, async (req, res) => {
-    let story = await Story.findById(req.params.id).lean()
+    try {
+
+        let story = await Story.findById(req.params.id).lean()
 
     if(!story) {
         return res.render('error/404')
@@ -84,8 +91,26 @@ router.put('/:id', ensureAuth, async (req, res) => {
 
         res.redirect('/dashboard')
     }
+
+    } catch (err) {
+        console.error(err)
+        return res.render('error/500')
+    }
+    
 })
 
+//@desc Delete Story
+//@route DELETE /stories/_id
+
+router.delete('/:id', ensureAuth , async (req,res)=> {
+    try{
+        await Story.remove({ _id: req.params.id })
+        res.redirect('/dashboard')
+    } catch (err) {
+        console.error(err)
+        return res.render('error/500')
+    }
+})
 
 
 module.exports = router
